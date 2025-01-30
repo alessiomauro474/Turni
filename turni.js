@@ -33,8 +33,8 @@ function fetchShifts() {
     .then(data => {
         if (data && Array.isArray(data)) {
             console.log("Dati ricevuti:", data);
-            shifts = data;  // Popola l'array shifts con i dati ricevuti
-            renderShifts();  // Rende visibile la lista dei turni
+            shifts = data;  
+            renderShifts();  
         } else {
             console.error("Dati non validi ricevuti dall'API.");
         }
@@ -59,10 +59,10 @@ function sendShift(shift) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            start_time: shift.start,  // ⬅️ Modifica se il backend usa un altro formato
-            end_time: shift.end,      // ⬅️
+            start_time: shift.start,  
+            end_time: shift.end,      
             day: shift.day,
-            date: shift.date.toISOString().split("T")[0], // Converte la data in YYYY-MM-DD
+            date: shift.date.toISOString().split("T")[0], 
             worker: shift.worker
         })
     })
@@ -154,7 +154,7 @@ document.getElementById("shift-date").addEventListener("change", function() {
     const date = new Date(this.value);  // Ottieni la data selezionata
     const daysOfWeek = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
     
-    const dayOfWeek = daysOfWeek[date.getDay()];  // Ottieni il giorno della settimana (0 = Domenica, 1 = Lunedì, etc.)
+    const dayOfWeek = daysOfWeek[date.getDay()]; 
     document.getElementById("day").value = dayOfWeek;
 });
 
