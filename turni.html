@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Turni</title>
+  
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Gestione Turni</h2>
+        <div id="error-notification" class="error-notification" style="display: none;">
+            <span id="error-message"></span>
+        </div>
+        
+        <form id="addShiftForm">
+            <label for="shift-date">Data:</label>
+            <input type="date" id="shift-date" required min="" />
+            
+        
+            <label for="day">Giorno della Settimana:</label>
+            <input type="text" id="day" disabled> 
+        
+            <label for="start-time">Inizio:</label>
+            <input type="time" id="start-time" required>
+        
+            <label for="end-time">Fine:</label>
+            <input type="time" id="end-time" required>
+        
+            <button type="submit">Aggiungi Turno</button>
+        </form>
+
+        <ul id="shift-list"></ul>
+
+        <div class="filters-container">
+            <h3>Filtri Turni</h3>
+            <div class="filter-item">
+                <label for="search">Filtra per Giorno:</label>
+                <input type="text" id="search" placeholder="Es. Lunedì, Martedì..." />
+            </div>
+            <div class="filter-item">
+                <label for="worker-search">Cerca per Lavoratore:</label>
+                <input type="text" id="worker-search" placeholder="Es. Mario, Luigi..." />
+            </div>
+            <div class="filter-item">
+                <label for="sort-order">Ordina per:</label>
+                <select id="sort-order">
+                    <option value="asc">Ordinamento crescente</option>
+                    <option value="desc">Ordinamento decrescente</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="logout">Logout</button>
+    </div>
+ 
+    <script src="turni.js"></script>
+</body>
+</html>
+
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+.dashboard-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px;
+}
+
+
+h2, h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+input, select, button {
+    padding: 12px;
+    margin: 12px 0;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: all 0.3s;
+}
+
+input:hover, select:hover, button:hover {
+    border-color: #007bff;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.error-notification {
+    background-color: #ffcccc; 
+    color: #d9534f; 
+    border: 1px solid #d9534f;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    display: none; 
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-notification span {
+    font-weight: bold;
+}
+
+
+.error-notification.show {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+li {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+
+li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+li span {
+    font-weight: bold;
+    color: #333;
+}
+
+li {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+}
+
+li span {
+    font-weight: 600;
+    color: #007bff;
+}
+
+#logout {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#logout:hover {
+    background-color: #e60000;
+}
+
+#sort-order {
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 100%;
+}
+.filters-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+
+.filters-container h3 {
+    font-size: 20px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filter-item {
+    margin-bottom: 20px;
+}
+
+
+.filter-item label {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+}
+
+
+.filter-item input, .filter-item select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.filter-item input:focus, .filter-item select:focus {
+    border-color: #007bff;
+}
+
+
+.filter-item:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .dashboard-container {
+        width: 100%;
+        padding: 20px;
+    }
+
+    input, select, button {
+        font-size: 14px;
+    }
+
+    ul {
+        margin-top: 20px;
+    }
+}
+
+</style>
+<script>
+document.getElementById("logout").addEventListener("click", function() {
+
+
+    window.location.href = "index.html";
+});
+
+
+
+    document.getElementById("logout").addEventListener("click", function() {
+        window.location.href = "index.html";
+    });
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        console.log("🔴 Nessun token trovato. Redirecting...");
+        window.location.href = "index.html"; // Reindirizza alla pagina di login se il token non è presente
+    } else {
+        console.log("🟢 Token trovato:", token);
+    }
+
+    // Funzione per ottenere i turni
+    async function getShifts() {
+        const response = await fetch('https://dev-imed.posytron.it/api/house-operator/v1/shifts', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        try {
+            const data = await response.json();
+            console.log("Risposta del server:", data);
+            if (!response.ok) {
+                document.getElementById("error-message").textContent = data.message || "Errore sconosciuto.";
+                return;
+            }
+
+            // Mostra i turni nella lista
+            const shiftList = document.getElementById("shift-list");
+            shiftList.innerHTML = ''; // Pulisce la lista prima di aggiungere nuovi turni
+            data.data.forEach(shift => {
+                const shiftItem = document.createElement("li");
+                shiftItem.innerHTML = `
+                    <span>${shift.date}</span> - ${shift.start_time} - ${shift.end_time} 
+                    (${shift.day_of_week})
+                `;
+                shiftList.appendChild(shiftItem);
+            });
+
+        } catch (error) {
+            document.getElementById("error-message").textContent = "Errore durante il recupero dei turni.";
+            console.error(error);
+        }
+    }
+
+    // Chiama la funzione per ottenere i turni
+    getShifts();
+});
+
+
+</script>
+

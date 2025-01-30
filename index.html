@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm" onsubmit="return false;">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Email" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Password" required>
+            
+            <button type="submit">Accedi</button>
+            <div id="error-message" class="error"></div>
+        </form>
+    </div>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 0 20px;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #001aff;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, button {
+            padding: 14px;
+            margin: 12px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, button:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .login-container {
+                width: 100%;
+                padding: 20px;
+            }
+
+            input, button {
+                font-size: 14px;
+            }
+        }
+    </style>
+
+<script>
+ async function login(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+        document.getElementById("error-message").textContent = "Compila tutti i campi.";
+        return;
+    }
+    console.log("🔵 Il file JavaScript è stato caricato!");
+
+    const credentials = {
+        email: email, 
+        password: password,
+        merchant: 1  
+    };
+
+    const response = await fetch('https://dev-imed.posytron.it/api/house-operator/v1/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    });
+
+    try {
+        const data = await response.json();
+        console.log("Risposta del server:", data);
+        if (!response.ok) {
+            document.getElementById("error-message").textContent = data.message || "Errore sconosciuto.";
+            return;
+        }
+
+
+        const token = data.data?.token || data.token || data.accessToken || data.jwt;
+
+        console.log("Token ricevuto:", token);
+
+        if (!token) {
+            document.getElementById("error-message").textContent = "Errore: nessun token ricevuto.";
+            return;
+        }
+
+        localStorage.setItem("token", token);
+        console.log("Login riuscito! Token salvato:", token);
+
+        setTimeout(() => {
+            window.location.href = "turni.html";
+        }, 1000);
+
+    } catch (error) {
+        document.getElementById("error-message").textContent = "Errore durante il login.";
+        console.error(error);
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("🟢 Pagina caricata correttamente!");
+    
+    const form = document.getElementById("loginForm");
+    if (!form) {
+        console.log("🔴 ERRORE: Form non trovato!");
+        return;
+    }
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        login(event); 
+        console.log("🟢 Evento submit intercettato!");
+    });
+});
+</script>
+</body>
+</html>
